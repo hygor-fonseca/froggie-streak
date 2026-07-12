@@ -14,9 +14,9 @@
 //
 // The Firebase config values themselves are safe to commit publicly.
 window.FIREBASE_CONFIG = {
-  apiKey: "PASTE_ME",
-  authDomain: "PASTE_ME.firebaseapp.com",
-  databaseURL: "https://PASTE_ME-default-rtdb.firebaseio.com",
-  projectId: "PASTE_ME",
+  apiKey: "AIzaSyBokc4-_LG_wde0MqkW7TVyHJROvHX6coU",
+  authDomain: "froggie-48600.firebaseapp.com",
+  databaseURL: "https://froggie-48600-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "froggie-48600",
 };
 window.ROOM_ID = "demo-pond"; // fallback when no #hash link was ever opened
