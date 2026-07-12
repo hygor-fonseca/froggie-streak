@@ -1,0 +1,6 @@
+# local tooling & session files — not part of the app
+tools/
+roots.sst
+node_modules/
+.turbo/
+.claude/
