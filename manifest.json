@@ -1,7 +1,8 @@
 {
-  "name": "Froggie Streak",
-  "short_name": "Froggie",
-  "description": "One streak, two froggies. The day only counts when you both hop in.",
+  "name": "Sapinho Streak",
+  "short_name": "Sapinho",
+  "lang": "pt-PT",
+  "description": "O streak de exercício do Hygor e da Aybala. Só conta quando os dois treinam.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

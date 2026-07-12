@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-PT">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Froggie Streak 🐸</title>
-  <meta name="description" content="A two-froggie shared exercise streak. The day only counts when both hop in.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sapinho Streak 🐸</title>
+  <meta name="description" content="O streak de exercício do Hygor e da Aybala. Só conta quando os dois treinam.">
   <meta name="theme-color" content="#fbf6ef">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -17,109 +17,126 @@
 <body>
   <main class="app">
 
-    <!-- ============ Screen: pick your froggie ============ -->
+    <!-- ============ Ecrã: quem és tu? ============ -->
     <section id="screen-picker" hidden>
       <header class="brand">
-        <h1>Froggie Streak <span aria-hidden="true">🐸</span></h1>
-        <p class="tagline">One streak, two froggies. The day only counts when you <em>both</em> hop in.</p>
+        <h1>Sapinho Streak <span aria-hidden="true">🐸</span></h1>
+        <p class="tagline">O nosso streak. Só conta quando os dois treinam.</p>
       </header>
 
-      <p class="picker-question">Who are you, froggie?</p>
+      <p class="picker-question">Quem está a treinar?</p>
 
       <div class="frog-cards">
         <button class="frog-card frog-card--you" data-slot="p1" type="button">
           <span class="frog-face" aria-hidden="true">🐸</span>
-          <span class="frog-name" data-name-slot="p1">Claim this froggie</span>
+          <span class="frog-name">Hygor</span>
+          <span class="frog-sub">flexões &amp; agachamentos</span>
         </button>
         <button class="frog-card frog-card--partner" data-slot="p2" type="button">
           <span class="frog-face" aria-hidden="true">🐸</span>
-          <span class="frog-name" data-name-slot="p2">Claim this froggie</span>
+          <span class="frog-name">Aybala</span>
+          <span class="frog-sub">exercício no tapete</span>
         </button>
       </div>
-
-      <form id="claim-form" hidden>
-        <h2 id="claim-title">Hi froggie!</h2>
-        <div class="field" id="claim-name-field">
-          <label for="claim-name">Your name</label>
-          <input id="claim-name" name="name" type="text" maxlength="20" autocomplete="off">
-        </div>
-        <div class="field">
-          <label for="claim-pin">4-digit PIN</label>
-          <!-- text + CSS masking, not type=password: keeps password managers from
-               autofilling/nagging over a 4-digit couple PIN -->
-          <input id="claim-pin" name="froggie-pin" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4"
-                 autocomplete="off" class="pin-input" required aria-describedby="pin-help">
-          <p class="helper" id="pin-help">So only you can check in as you.</p>
-          <p class="error" id="claim-error" role="alert" hidden>That PIN doesn't match. Try again, froggie.</p>
-        </div>
-        <div class="claim-actions">
-          <button type="submit" class="btn btn-primary" id="claim-submit">Let's hop!</button>
-          <button type="button" class="btn btn-ghost" id="claim-cancel">Back</button>
-        </div>
-      </form>
     </section>
 
-    <!-- ============ Screen: today ============ -->
+    <!-- ============ Ecrã: hoje ============ -->
     <section id="screen-today" hidden>
       <header class="topbar">
-        <span class="topbar-brand">Froggie Streak <span aria-hidden="true">🐸</span></span>
-        <span class="topbar-right">
-          <span class="topbar-me" id="topbar-me"></span>
-          <button class="bell" id="bell-btn" type="button" aria-pressed="false" aria-label="Notifications off">🔕</button>
-        </span>
+        <span class="topbar-brand">Sapinho Streak <span aria-hidden="true">🐸</span></span>
+        <button class="topbar-me" id="switch-me" type="button" title="Trocar de sapinho">
+          <span id="topbar-me-name"></span> ⇄
+        </button>
       </header>
 
       <p class="banner banner-demo" id="demo-banner" hidden>
-        Demo mode — syncing on this device only. Add your Firebase config to sync with your froggie. <span aria-hidden="true">🐸</span>
+        Modo demo — só sincroniza neste dispositivo. Adiciona a config do Firebase para sincronizar com o teu sapinho.
       </p>
 
-      <div class="hero card" id="hero">
-        <svg id="flame" class="flame" viewBox="0 0 64 80" width="88" height="110" role="img" aria-labelledby="flame-title">
-          <title id="flame-title">Streak flame</title>
-          <path class="flame-body" d="M32 4 C38 18 54 26 54 48 a22 22 0 0 1 -44 0 C10 30 24 22 32 4 Z"/>
-          <path class="flame-core" d="M32 34 C36 42 43 46 43 56 a11 11 0 0 1 -22 0 C21 48 28 42 32 34 Z"/>
-        </svg>
+      <div class="hero card">
+        <div class="mascot" id="mascot" data-mood="idle" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="128" height="128">
+            <ellipse class="m-shadow" cx="60" cy="108" rx="34" ry="7"/>
+            <circle class="m-cheek" cx="30" cy="70" r="10"/>
+            <circle class="m-cheek" cx="90" cy="70" r="10"/>
+            <circle class="m-eye-w" cx="42" cy="34" r="17"/>
+            <circle class="m-eye-w" cx="78" cy="34" r="17"/>
+            <ellipse class="m-body" cx="60" cy="74" rx="46" ry="40"/>
+            <circle class="m-eye-w" cx="42" cy="32" r="17"/>
+            <circle class="m-eye-w" cx="78" cy="32" r="17"/>
+            <circle class="m-pupil" cx="43" cy="34" r="7"/>
+            <circle class="m-pupil" cx="77" cy="34" r="7"/>
+            <path class="m-mouth m-happy" d="M40 82 Q60 100 80 82" fill="none"/>
+            <path class="m-mouth m-wait"  d="M50 88 Q60 94 70 88" fill="none"/>
+            <path class="m-mouth m-sad"   d="M44 94 Q60 80 76 94" fill="none"/>
+            <path class="m-mouth m-party" d="M42 82 Q60 106 78 82 Z"/>
+          </svg>
+        </div>
         <div class="streak-num" id="streak-num">0</div>
-        <div class="streak-label" id="streak-label">day streak</div>
-        <span class="badge-freeze" id="hero-freeze" hidden>Rest day 🧊</span>
+        <div class="streak-label">dias seguidos</div>
+        <p class="freeze-line" id="freeze-line" hidden>Proteção disponível <span aria-hidden="true">🧊</span></p>
       </div>
 
       <div class="pair card">
-        <div class="partner" id="pair-p1">
+        <div class="partner">
           <span class="avatar avatar-you" data-avatar="p1" aria-hidden="true">🐸</span>
           <span class="partner-name" data-name-slot="p1"></span>
           <span class="partner-state" data-state-slot="p1"></span>
+          <span class="partner-note" data-note-slot="p1"></span>
         </div>
         <div class="pair-heart" aria-hidden="true">♥</div>
-        <div class="partner" id="pair-p2">
+        <div class="partner">
           <span class="avatar avatar-partner" data-avatar="p2" aria-hidden="true">🐸</span>
           <span class="partner-name" data-name-slot="p2"></span>
           <span class="partner-state" data-state-slot="p2"></span>
+          <span class="partner-note" data-note-slot="p2"></span>
         </div>
       </div>
 
       <p class="status" id="status" aria-live="polite"></p>
-      <p class="undo-row"><button class="undo" id="undo-btn" type="button" hidden>undo my check-in</button></p>
 
-      <div class="week card">
-        <h2 class="week-title">This week</h2>
-        <ol class="week-strip" id="week-strip"></ol>
-      </div>
-
-      <div class="history card">
-        <h2 class="week-title">History</h2>
-        <div class="stats">
-          <div class="stat"><span class="stat-value" id="stat-best">0</span><span class="stat-name">Best streak</span></div>
-          <div class="stat"><span class="stat-value" id="stat-days">0</span><span class="stat-name">Days together</span></div>
+      <div class="checkin-area" id="checkin-area">
+        <label class="note-field" id="note-field" hidden>
+          <span class="note-label">O que treinaste? (opcional)</span>
+          <input id="note-input" type="text" maxlength="60" autocomplete="off">
+        </label>
+        <div class="checkin-row">
+          <button class="btn btn-checkin" id="checkin-btn" type="button">Já treinei <span aria-hidden="true">🐸</span></button>
+          <button class="undo" id="undo-btn" type="button" hidden>desfazer</button>
         </div>
-        <ol class="history-grid" id="history-grid"></ol>
       </div>
 
-      <div class="checkin-bar">
-        <button class="btn btn-checkin" id="checkin-btn" type="button">Check in <span aria-hidden="true">🐸</span></button>
-        <button class="rest" id="rest-btn" type="button" aria-pressed="false" aria-label="Mark today a rest day">🧊</button>
+      <div class="cal card">
+        <div class="cal-head">
+          <button class="cal-nav" id="cal-prev" type="button" aria-label="Mês anterior">‹</button>
+          <h2 class="cal-title" id="cal-title"></h2>
+          <button class="cal-nav" id="cal-next" type="button" aria-label="Mês seguinte">›</button>
+        </div>
+        <ol class="cal-dow" aria-hidden="true">
+          <li>S</li><li>T</li><li>Q</li><li>Q</li><li>S</li><li>S</li><li>D</li>
+        </ol>
+        <ol class="cal-grid" id="cal-grid"></ol>
+        <ul class="cal-legend">
+          <li><span class="dot dot-both"></span>os dois</li>
+          <li><span class="dot dot-partial"></span>um</li>
+          <li><span class="dot dot-frozen"></span>protegido</li>
+          <li><span class="dot dot-missed"></span>falhado</li>
+        </ul>
+        <div class="stats">
+          <div class="stat"><span class="stat-value" id="stat-best">0</span><span class="stat-name">Melhor streak</span></div>
+          <div class="stat"><span class="stat-value" id="stat-days">0</span><span class="stat-name">Dias juntos</span></div>
+        </div>
       </div>
     </section>
+
+    <!-- ============ Celebração de marco ============ -->
+    <div class="milestone" id="milestone" hidden>
+      <div class="milestone-card">
+        <div class="milestone-frog" aria-hidden="true">🐸</div>
+        <p class="milestone-msg" id="milestone-msg"></p>
+        <button class="btn btn-checkin" id="milestone-close" type="button">Boa! 🎉</button>
+      </div>
+    </div>
 
   </main>
 

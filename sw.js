@@ -2,7 +2,7 @@
 // Network-first: updates always ship without version discipline; cache is the
 // offline fallback. Right trade for tiny static files + two users.
 const CACHE = "froggie";
-const SHELL = [".", "index.html", "styles.css", "app.js", "firebase-config.js", "manifest.json", "icon.svg", "apple-touch-icon.png"];
+const SHELL = [".", "index.html", "styles.css", "app.js", "streak.js", "firebase-config.js", "manifest.json", "icon.svg", "apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

@@ -4,3 +4,5 @@ roots.sst
 node_modules/
 .turbo/
 .claude/
+.agents/
+skills-lock.json
