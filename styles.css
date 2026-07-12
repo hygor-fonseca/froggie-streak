@@ -76,6 +76,15 @@ body::before { /* grão fino para tirar o "flat digital" */
   position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
+body::after { /* bolhas suaves nas cores dos dois, a derivar devagar */
+  content: "";
+  position: fixed; inset: -40px; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(190px 190px at 14% 22%, rgba(107, 78, 240, 0.07), transparent 70%),
+    radial-gradient(230px 230px at 86% 76%, rgba(214, 51, 124, 0.06), transparent 70%);
+  animation: drift 16s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform: translateY(-22px); } }
 button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
 :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; border-radius: var(--rounded-sm); }
 
@@ -91,7 +100,11 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
   border-radius: var(--rounded-xl);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
-  box-shadow: var(--shadow-card);
+  /* clay: sombra macia + luz em cima + peso em baixo */
+  box-shadow:
+    0 8px 20px rgba(122, 70, 34, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -8px 14px rgba(122, 70, 34, 0.035);
 }
 
 /* Entrada em cascata (uma vez, ao carregar cada ecrã) */
@@ -118,11 +131,11 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
 .frog-card--partner .frog-face { color: var(--color-partner); }
 .frog-name { font-family: var(--font-display); font-size: 20px; font-weight: 800; }
 .frog-sub { font-size: 13px; font-weight: 700; opacity: 0.8; }
-.frog-card:active { transform: translateY(4px); }
-.frog-card--you { background: var(--color-you-container); color: var(--color-on-you-container); box-shadow: 0 4px 0 var(--color-you); }
-.frog-card--you:active { box-shadow: 0 0 0 var(--color-you); }
-.frog-card--partner { background: var(--color-partner-container); color: var(--color-on-partner-container); box-shadow: 0 4px 0 var(--color-partner); }
-.frog-card--partner:active { box-shadow: 0 0 0 var(--color-partner); }
+.frog-card:active { transform: translateY(4px) scale(0.97); }
+.frog-card--you { background: var(--color-you-container); color: var(--color-on-you-container); box-shadow: 0 4px 0 var(--color-you), inset 0 2px 0 rgba(255, 255, 255, 0.6), inset 0 -8px 14px rgba(58, 30, 140, 0.07); }
+.frog-card--you:active { box-shadow: 0 0 0 var(--color-you), inset 0 2px 0 rgba(255, 255, 255, 0.6); }
+.frog-card--partner { background: var(--color-partner-container); color: var(--color-on-partner-container); box-shadow: 0 4px 0 var(--color-partner), inset 0 2px 0 rgba(255, 255, 255, 0.6), inset 0 -8px 14px rgba(132, 19, 79, 0.07); }
+.frog-card--partner:active { box-shadow: 0 0 0 var(--color-partner), inset 0 2px 0 rgba(255, 255, 255, 0.6); }
 
 /* ===== Buttons ===== */
 .btn { border: none; border-radius: var(--rounded-full); font-size: 17px; font-weight: 800; line-height: 1; padding: 16px var(--spacing-lg); min-height: 48px; }
@@ -145,7 +158,8 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
   text-align: center;
   background: linear-gradient(180deg, var(--color-surface) 52%, #eef7ec 100%); /* água ao fundo */
 }
-.mascot { display: inline-block; transform-origin: 50% 90%; }
+.mascot { display: inline-block; transform-origin: 50% 90%; transition: transform 150ms var(--ease); }
+.mascot:active { transform: scale(0.92); } /* boop */
 .mascot .m-pad { fill: var(--pad); }
 .mascot .m-pad-hi { fill: var(--pad-hi); }
 .mascot svg { animation: breathe 3.4s ease-in-out infinite; transform-origin: 50% 88%; }
@@ -193,7 +207,12 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
 /* ===== Par ===== */
 .pair { display: flex; align-items: flex-start; justify-content: space-evenly; }
 .partner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xs); max-width: 44%; }
-.avatar { width: 48px; height: 48px; border-radius: var(--rounded-full); display: grid; place-items: center; transition: background 300ms var(--ease), color 300ms var(--ease); }
+.avatar {
+  width: 48px; height: 48px; border-radius: var(--rounded-full);
+  display: grid; place-items: center;
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.55), inset 0 -3px 6px rgba(42, 36, 49, 0.07);
+  transition: background 300ms var(--ease), color 300ms var(--ease);
+}
 .avatar svg { display: block; margin-top: 2px; }
 .avatar-you { background: var(--color-you-container); color: var(--color-you); }
 .avatar-you.checked { background: var(--color-you); color: #fff; }
@@ -224,10 +243,11 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
   border: none; border-radius: var(--rounded-full);
   font-family: var(--font-display); font-size: 18px; font-weight: 800; line-height: 1;
   padding: 18px var(--spacing-lg); min-height: 56px;
-  box-shadow: 0 4px 0 #b42e13; transition: transform 150ms var(--ease), box-shadow 150ms var(--ease), background 300ms var(--ease);
+  box-shadow: 0 4px 0 #b42e13, inset 0 2px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 150ms var(--ease), box-shadow 150ms var(--ease), background 300ms var(--ease);
 }
-.btn-checkin:active { transform: translateY(4px); box-shadow: 0 0 0 #b42e13; }
-.btn-checkin.done { background: var(--color-success-strong); box-shadow: 0 4px 0 #135c28; pointer-events: none; }
+.btn-checkin:active { transform: translateY(4px) scale(0.97); box-shadow: 0 0 0 #b42e13, inset 0 2px 0 rgba(255, 255, 255, 0.25); }
+.btn-checkin.done { background: var(--color-success-strong); box-shadow: 0 4px 0 #135c28, inset 0 2px 0 rgba(255, 255, 255, 0.25); pointer-events: none; }
 .undo { background: none; border: none; padding: 12px var(--spacing-sm); min-height: 44px; font-size: 14px; font-weight: 700; color: var(--color-on-surface-muted); text-decoration: underline; }
 
 /* ===== Calendário ===== */
