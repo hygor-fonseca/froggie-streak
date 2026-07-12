@@ -7,15 +7,16 @@
 //   3. Rules tab → paste:
 //        { "rules": { "rooms": { "$room": { ".read": true, ".write": true } } } }
 //   4. Project settings → General → Your apps → Web app → copy the config here
-//   5. Change ROOM_ID below to something long and unguessable (it's the key
-//      to your shared streak — like a secret pond only you two know).
+//   5. Don't put your real room secret below — share the app as a link with
+//      the secret in the hash instead:  https://you.github.io/repo/#your-secret-pond
+//      Each device remembers it after the first visit. That keeps the secret
+//      out of this (public) repo; access control is the unguessable room name.
 //
-// These config values are safe to commit publicly; access control comes from
-// the unguessable ROOM_ID, which is fine for a two-froggie exercise tracker.
+// The Firebase config values themselves are safe to commit publicly.
 window.FIREBASE_CONFIG = {
   apiKey: "PASTE_ME",
   authDomain: "PASTE_ME.firebaseapp.com",
   databaseURL: "https://PASTE_ME-default-rtdb.firebaseio.com",
   projectId: "PASTE_ME",
 };
-window.ROOM_ID = "secret-pond-CHANGE-ME";
+window.ROOM_ID = "demo-pond"; // fallback when no #hash link was ever opened

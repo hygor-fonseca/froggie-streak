@@ -333,7 +333,12 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) rend
 // ===== Boot =====
 
 (async () => {
-  store = configured ? await firebaseStore(window.FIREBASE_CONFIG, window.ROOM_ID) : localStore();
+  // The room secret travels in the shared link (…/#secret-pond), not the public
+  // repo: first visit stores it, so the installed PWA works without the hash.
+  const hashRoom = decodeURIComponent(location.hash.slice(1));
+  if (hashRoom) localStorage.setItem("froggie.roomId", hashRoom);
+  const room = localStorage.getItem("froggie.roomId") || window.ROOM_ID;
+  store = configured ? await firebaseStore(window.FIREBASE_CONFIG, room) : localStore();
   store.subscribe((d) => { data = d || {}; render(); });
 })();
 
