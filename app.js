@@ -1,5 +1,5 @@
 // Sapinho Streak — o streak de exercício do Hygor e da Aybala. 🐸
-import { dayKey, addDays, parseKey, keyOf, computeHistory, cellState } from "./streak.js";
+import { dayKey, addDays, parseKey, computeHistory, cellState } from "./streak.js";
 
 // Só duas pessoas, fixas. Sem contas, sem PINs.
 const PEOPLE = {
@@ -52,6 +52,7 @@ let data = {};
 let me = localStorage.getItem("froggie.me"); // 'p1' | 'p2' | null
 let calMonth = null;                          // primeiro dia do mês mostrado, 'YYYY-MM-01'
 let prevBoth = null;                          // deteção da transição para celebração
+let prevStreak = null;                        // para o "pop" do número
 const shown = new Set(JSON.parse(localStorage.getItem("froggie.milestones") || "[]"));
 
 function render() {
@@ -73,8 +74,19 @@ function render() {
   const partnerIn = !!c[other(me)];
 
   // Herói + mascote
-  $("#streak-num").textContent = hist.streak;
+  const num = $("#streak-num");
+  num.textContent = hist.streak;
+  if (prevStreak !== null && prevStreak !== hist.streak) {
+    num.classList.remove("pop");
+    void num.offsetWidth; // reinicia a animação
+    num.classList.add("pop");
+  }
+  prevStreak = hist.streak;
+  $("#streak-label").textContent = hist.streak === 1 ? "dia seguido" : "dias seguidos";
   $("#freeze-line").hidden = hist.freezes < 1;
+  const goal = Object.keys(MILESTONES).map(Number).find((n) => n > hist.streak);
+  $("#goal-line").hidden = !(hist.streak > 0 && goal);
+  if (goal) $("#goal-line").textContent = `Próximo marco: ${goal} dias 🏁`;
   const mascot = $("#mascot");
   if (both) mascot.dataset.mood = "party";
   else if (iAmIn || partnerIn) mascot.dataset.mood = "wait";
@@ -101,13 +113,14 @@ function render() {
     st.classList.toggle("in", !!c[slot]);
     $(`[data-note-slot="${slot}"]`).textContent = c[slot] && c[slot + "_note"] ? "“" + c[slot + "_note"] + "”" : "";
   }
+  $(".pair-heart").classList.toggle("full", both);
 
   // Linha de estado
   const them = PEOPLE[other(me)];
   const status = $("#status");
-  if (both) status.textContent = "Os dois treinaram — dia garantido! 🎉";
+  if (both) status.textContent = "Os dois treinaram, dia garantido! 🎉";
   else if (iAmIn) status.textContent = `Falta ${them.art} ${them.name} 🐸`;
-  else if (partnerIn) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já treinou — falta só tu! 💪`;
+  else if (partnerIn) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já treinou, agora só faltas tu! 💪`;
   else status.textContent = "Ainda ninguém treinou hoje.";
 
   // Botão + nota
@@ -148,7 +161,7 @@ function renderCalendar(hist, today) {
     li.textContent = d;
     const c = (data.checkins || {})[k] || {};
     const note = [c.p1_note, c.p2_note].filter(Boolean).join(" · ");
-    li.title = `${d}/${m} — ${{both:"os dois treinaram",frozen:"protegido 🧊",partial:"só um treinou","partial-today":"só um treinou",today:"hoje",missed:"falhado",future:"",empty:""}[state]}${note ? " · " + note : ""}`;
+    li.title = `${d}/${m}: ${{both:"os dois treinaram",frozen:"protegido 🧊",partial:"só um treinou","partial-today":"só um treinou",today:"hoje",missed:"sem treino",future:"",empty:""}[state]}${note ? " · " + note : ""}`;
     grid.appendChild(li);
   }
 
@@ -168,16 +181,23 @@ function celebrate() {
     s.textContent = bits[i % bits.length];
     s.style.left = 8 + Math.random() * 84 + "vw";
     s.style.top = 4 + Math.random() * 20 + "vh";
+    s.style.fontSize = 16 + Math.random() * 12 + "px";
+    s.style.setProperty("--dx", Math.random() * 120 - 60 + "px");
+    s.style.setProperty("--rot", 180 + Math.random() * 400 + "deg");
     s.style.animationDelay = Math.random() * 300 + "ms";
     document.body.appendChild(s);
-    setTimeout(() => s.remove(), 1800);
+    setTimeout(() => s.remove(), 1900);
   }
 }
 function showMilestone(msg) {
   $("#milestone-msg").textContent = msg;
   $("#milestone").hidden = false;
+  $("#milestone-close").focus();
 }
-$("#milestone-close").addEventListener("click", () => { $("#milestone").hidden = true; });
+function hideMilestone() { $("#milestone").hidden = true; }
+$("#milestone-close").addEventListener("click", hideMilestone);
+$("#milestone").addEventListener("click", (e) => { if (e.target.id === "milestone") hideMilestone(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideMilestone(); });
 
 // ===== Escolher / trocar de sapinho =====
 $("#screen-picker").addEventListener("click", (e) => {
@@ -207,8 +227,8 @@ $("#note-input").addEventListener("input", (e) => {
   noteTimer = setTimeout(() => store.patch(["checkins", dayKey(), me + "_note"], val || null), 400);
 });
 
-$("#cal-prev").addEventListener("click", () => { calMonth = shiftMonth(calMonth, -1); renderCalendar(computeHistory(data.checkins || {}), dayKey()); });
-$("#cal-next").addEventListener("click", () => { calMonth = shiftMonth(calMonth, 1); renderCalendar(computeHistory(data.checkins || {}), dayKey()); });
+$("#cal-prev").addEventListener("click", () => { calMonth = shiftMonth(calMonth, -1); render(); });
+$("#cal-next").addEventListener("click", () => { calMonth = shiftMonth(calMonth, 1); render(); });
 function shiftMonth(k, n) {
   const [y, m] = k.split("-").map(Number);
   const dt = new Date(Date.UTC(y, m - 1 + n, 1));

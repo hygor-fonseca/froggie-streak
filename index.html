@@ -50,31 +50,43 @@
       </header>
 
       <p class="banner banner-demo" id="demo-banner" hidden>
-        Modo demo — só sincroniza neste dispositivo. Adiciona a config do Firebase para sincronizar com o teu sapinho.
+        Modo demo: só sincroniza neste dispositivo. Adiciona a config do Firebase para sincronizar com o teu sapinho.
       </p>
 
       <div class="hero card">
         <div class="mascot" id="mascot" data-mood="idle" aria-hidden="true">
           <svg viewBox="0 0 120 120" width="128" height="128">
-            <ellipse class="m-shadow" cx="60" cy="108" rx="34" ry="7"/>
-            <circle class="m-cheek" cx="30" cy="70" r="10"/>
-            <circle class="m-cheek" cx="90" cy="70" r="10"/>
-            <circle class="m-eye-w" cx="42" cy="34" r="17"/>
-            <circle class="m-eye-w" cx="78" cy="34" r="17"/>
-            <ellipse class="m-body" cx="60" cy="74" rx="46" ry="40"/>
-            <circle class="m-eye-w" cx="42" cy="32" r="17"/>
-            <circle class="m-eye-w" cx="78" cy="32" r="17"/>
-            <circle class="m-pupil" cx="43" cy="34" r="7"/>
-            <circle class="m-pupil" cx="77" cy="34" r="7"/>
-            <path class="m-mouth m-happy" d="M40 82 Q60 100 80 82" fill="none"/>
-            <path class="m-mouth m-wait"  d="M50 88 Q60 94 70 88" fill="none"/>
-            <path class="m-mouth m-sad"   d="M44 94 Q60 80 76 94" fill="none"/>
-            <path class="m-mouth m-party" d="M42 82 Q60 106 78 82 Z"/>
+            <ellipse class="m-shadow" cx="60" cy="107" rx="32" ry="6"/>
+            <circle class="m-body" cx="40" cy="36" r="16"/>
+            <circle class="m-body" cx="80" cy="36" r="16"/>
+            <ellipse class="m-body" cx="60" cy="72" rx="44" ry="38"/>
+            <ellipse class="m-belly" cx="60" cy="84" rx="25" ry="19"/>
+            <circle class="m-nostril" cx="54" cy="60" r="1.6"/>
+            <circle class="m-nostril" cx="66" cy="60" r="1.6"/>
+            <circle class="m-cheek" cx="30" cy="68" r="8"/>
+            <circle class="m-cheek" cx="90" cy="68" r="8"/>
+            <g class="m-eye">
+              <circle class="m-eye-w" cx="40" cy="36" r="11"/>
+              <circle class="m-pupil" cx="41" cy="38" r="5"/>
+              <circle class="m-glint" cx="43" cy="35" r="1.7"/>
+            </g>
+            <g class="m-eye">
+              <circle class="m-eye-w" cx="80" cy="36" r="11"/>
+              <circle class="m-pupil" cx="79" cy="38" r="5"/>
+              <circle class="m-glint" cx="81" cy="35" r="1.7"/>
+            </g>
+            <path class="m-mouth m-happy" d="M42 78 Q60 94 78 78" fill="none"/>
+            <path class="m-mouth m-wait"  d="M52 84 Q60 89 68 84" fill="none"/>
+            <path class="m-mouth m-sad"   d="M46 90 Q60 78 74 90" fill="none"/>
+            <path class="m-mouth m-party" d="M44 78 Q60 100 76 78 Z"/>
           </svg>
         </div>
         <div class="streak-num" id="streak-num">0</div>
-        <div class="streak-label">dias seguidos</div>
-        <p class="freeze-line" id="freeze-line" hidden>Proteção disponível <span aria-hidden="true">🧊</span></p>
+        <div class="streak-label" id="streak-label">dias seguidos</div>
+        <p class="hero-meta">
+          <span class="pill pill-freeze" id="freeze-line" hidden>Proteção disponível <span aria-hidden="true">🧊</span></span>
+          <span class="pill pill-goal" id="goal-line" hidden></span>
+        </p>
       </div>
 
       <div class="pair card">
@@ -120,7 +132,7 @@
           <li><span class="dot dot-both"></span>os dois</li>
           <li><span class="dot dot-partial"></span>um</li>
           <li><span class="dot dot-frozen"></span>protegido</li>
-          <li><span class="dot dot-missed"></span>falhado</li>
+          <li><span class="dot dot-missed"></span>sem treino</li>
         </ul>
         <div class="stats">
           <div class="stat"><span class="stat-value" id="stat-best">0</span><span class="stat-name">Melhor streak</span></div>
@@ -130,7 +142,7 @@
     </section>
 
     <!-- ============ Celebração de marco ============ -->
-    <div class="milestone" id="milestone" hidden>
+    <div class="milestone" id="milestone" role="dialog" aria-modal="true" aria-labelledby="milestone-msg" hidden>
       <div class="milestone-card">
         <div class="milestone-frog" aria-hidden="true">🐸</div>
         <p class="milestone-msg" id="milestone-msg"></p>
