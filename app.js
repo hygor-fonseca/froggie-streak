@@ -106,7 +106,7 @@ function render() {
 
   // Par
   for (const slot of ["p1", "p2"]) {
-    $(`[data-name-slot="${slot}"]`).textContent = PEOPLE[slot].name + (slot === me ? " (tu)" : "");
+    $(`[data-name-slot="${slot}"]`).textContent = PEOPLE[slot].name + (slot === me ? " (você)" : "");
     $(`[data-avatar="${slot}"]`).classList.toggle("checked", !!c[slot]);
     const st = $(`[data-state-slot="${slot}"]`);
     st.textContent = c[slot] ? "Treinou!" : "Ainda não";
@@ -120,7 +120,7 @@ function render() {
   const status = $("#status");
   if (both) status.textContent = "Os dois treinaram, dia garantido! 🎉";
   else if (iAmIn) status.textContent = `Falta ${them.art} ${them.name} 🐸`;
-  else if (partnerIn) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já treinou, agora só faltas tu! 💪`;
+  else if (partnerIn) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já treinou, agora só falta você! 💪`;
   else status.textContent = "Ainda ninguém treinou hoje.";
 
   // Botão + nota
