@@ -11,10 +11,22 @@
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <svg hidden aria-hidden="true">
+    <symbol id="frog-face" viewBox="0 0 64 52">
+      <circle cx="19" cy="13" r="10" fill="currentColor"/>
+      <circle cx="45" cy="13" r="10" fill="currentColor"/>
+      <ellipse cx="32" cy="30" rx="27" ry="20" fill="currentColor"/>
+      <circle cx="19" cy="13" r="6.5" fill="#fff"/>
+      <circle cx="45" cy="13" r="6.5" fill="#fff"/>
+      <circle cx="20" cy="14.5" r="3" fill="#2a2431"/>
+      <circle cx="44" cy="14.5" r="3" fill="#2a2431"/>
+      <path d="M22 34 Q32 43 42 34" stroke="#2a2431" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </symbol>
+  </svg>
   <main class="app">
 
     <!-- ============ Tela: quem é você? ============ -->
@@ -28,12 +40,12 @@
 
       <div class="frog-cards">
         <button class="frog-card frog-card--you" data-slot="p1" type="button">
-          <span class="frog-face" aria-hidden="true">🐸</span>
+          <svg class="frog-face" width="58" height="47" aria-hidden="true"><use href="#frog-face"/></svg>
           <span class="frog-name">Hygor</span>
           <span class="frog-sub">flexões &amp; agachamentos</span>
         </button>
         <button class="frog-card frog-card--partner" data-slot="p2" type="button">
-          <span class="frog-face" aria-hidden="true">🐸</span>
+          <svg class="frog-face" width="58" height="47" aria-hidden="true"><use href="#frog-face"/></svg>
           <span class="frog-name">Aybala</span>
           <span class="frog-sub">exercício no tapete</span>
         </button>
@@ -56,7 +68,9 @@
       <div class="hero card">
         <div class="mascot" id="mascot" data-mood="idle" aria-hidden="true">
           <svg viewBox="0 0 120 120" width="128" height="128">
-            <ellipse class="m-shadow" cx="60" cy="107" rx="32" ry="6"/>
+            <ellipse class="m-pad" cx="60" cy="106" rx="40" ry="8"/>
+            <ellipse class="m-pad-hi" cx="55" cy="104" rx="27" ry="5"/>
+            <ellipse class="m-shadow" cx="60" cy="105" rx="30" ry="5"/>
             <circle class="m-body" cx="40" cy="36" r="16"/>
             <circle class="m-body" cx="80" cy="36" r="16"/>
             <ellipse class="m-body" cx="60" cy="72" rx="44" ry="38"/>
@@ -91,14 +105,18 @@
 
       <div class="pair card">
         <div class="partner">
-          <span class="avatar avatar-you" data-avatar="p1" aria-hidden="true">🐸</span>
+          <span class="avatar avatar-you" data-avatar="p1" aria-hidden="true">
+            <svg width="32" height="26"><use href="#frog-face"/></svg>
+          </span>
           <span class="partner-name" data-name-slot="p1"></span>
           <span class="partner-state" data-state-slot="p1"></span>
           <span class="partner-note" data-note-slot="p1"></span>
         </div>
         <div class="pair-heart" aria-hidden="true">♥</div>
         <div class="partner">
-          <span class="avatar avatar-partner" data-avatar="p2" aria-hidden="true">🐸</span>
+          <span class="avatar avatar-partner" data-avatar="p2" aria-hidden="true">
+            <svg width="32" height="26"><use href="#frog-face"/></svg>
+          </span>
           <span class="partner-name" data-name-slot="p2"></span>
           <span class="partner-state" data-state-slot="p2"></span>
           <span class="partner-note" data-note-slot="p2"></span>
@@ -144,7 +162,9 @@
     <!-- ============ Celebração de marco ============ -->
     <div class="milestone" id="milestone" role="dialog" aria-modal="true" aria-labelledby="milestone-msg" hidden>
       <div class="milestone-card">
-        <div class="milestone-frog" aria-hidden="true">🐸</div>
+        <div class="milestone-frog" aria-hidden="true">
+          <svg width="76" height="62"><use href="#frog-face"/></svg>
+        </div>
         <p class="milestone-msg" id="milestone-msg"></p>
         <button class="btn btn-checkin" id="milestone-close" type="button">Boa! 🎉</button>
       </div>

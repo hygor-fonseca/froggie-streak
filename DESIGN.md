@@ -35,20 +35,20 @@ colors:
   on-error: "#FFFFFF"
 typography:
   stat-number:
-    fontFamily: Nunito
-    fontSize: 56px
+    fontFamily: Baloo 2
+    fontSize: 60px
     fontWeight: "800"
     lineHeight: 1
     letterSpacing: -0.02em
     fontFeature: "'tnum' 1"
   display:
-    fontFamily: Nunito
-    fontSize: 34px
+    fontFamily: Baloo 2
+    fontSize: 36px
     fontWeight: "800"
     lineHeight: 1.1
-    letterSpacing: -0.02em
+    letterSpacing: -0.01em
   headline-lg:
-    fontFamily: Nunito
+    fontFamily: Baloo 2
     fontSize: 24px
     fontWeight: "800"
     lineHeight: 1.2
@@ -246,9 +246,10 @@ glance.
 
 ## Typography
 
-The entire product speaks in **Nunito** — a rounded, high-legibility sans whose
-soft terminals match the friendly, Duolingo-adjacent personality without copying
-it. Character comes from weight and scale contrast, not from mixing typefaces.
+Two rounded faces share the work: **Baloo 2** (chunky, warm) carries display
+moments — the brand, the streak number, headings, the check-in button — while
+**Nunito** carries body copy and labels. Both have soft terminals that match the
+friendly, Duolingo-adjacent personality without copying it.
 
 - **Stat Number:** Nunito 800 with **tabular figures** for the big shared streak
   count. Tabular figures keep the number from shifting width as it ticks up (9 →

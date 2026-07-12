@@ -76,6 +76,7 @@ function render() {
   // Herói + mascote
   const num = $("#streak-num");
   num.textContent = hist.streak;
+  num.classList.toggle("zero", hist.streak === 0);
   if (prevStreak !== null && prevStreak !== hist.streak) {
     num.classList.remove("pop");
     void num.offsetWidth; // reinicia a animação
