@@ -258,7 +258,10 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
 .cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--spacing-xs); list-style: none; margin: 0; padding: 0; }
 .cal-dow { margin-bottom: var(--spacing-xs); }
 .cal-dow li { text-align: center; font-size: 11px; font-weight: 800; color: var(--color-on-surface-muted); }
-.cal-cell { aspect-ratio: 1; display: grid; place-items: center; border-radius: var(--rounded-sm); font-size: 13px; font-weight: 700; background: var(--color-surface-sunken); color: var(--color-on-surface-muted); }
+.cal-cell { aspect-ratio: 1; border-radius: var(--rounded-sm); font-size: 13px; font-weight: 700; background: var(--color-surface-sunken); color: var(--color-on-surface-muted); }
+.cal-day { width: 100%; height: 100%; display: grid; place-items: center; background: none; border: none; border-radius: inherit; font: inherit; color: inherit; padding: 0; cursor: pointer; transition: transform 120ms var(--ease); }
+.cal-day:disabled { cursor: default; }
+.cal-day:not(:disabled):active { transform: scale(0.9); }
 .cal-blank { background: none; }
 .cell-both { background: var(--color-success-strong); color: var(--color-on-success); }
 .cell-partial { background: var(--color-primary-container); color: var(--color-on-primary-container); }
@@ -280,6 +283,40 @@ button { font-family: inherit; touch-action: manipulation; cursor: pointer; }
 .stat { flex: 1; background: var(--color-surface-alt); border-radius: var(--rounded-md); padding: var(--spacing-sm) var(--spacing-md); text-align: center; }
 .stat-value { font-family: var(--font-display); display: block; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; font-feature-settings: "tnum" 1; }
 .stat-name { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-surface-muted); }
+
+/* ===== Detalhe do dia ===== */
+.sheet { position: fixed; inset: 0; z-index: 100; display: grid; place-items: end center; padding: 0; background: rgba(42, 36, 49, 0.55); backdrop-filter: blur(4px); }
+@media (min-height: 640px) { .sheet { place-items: center; padding: var(--spacing-lg); } }
+.sheet-card {
+  background: var(--color-surface);
+  border-radius: var(--rounded-xl) var(--rounded-xl) 0 0;
+  padding: var(--spacing-lg);
+  width: 100%; max-width: 440px;
+  box-shadow: var(--shadow-float);
+  animation: sheet-up 380ms var(--ease);
+  padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  position: relative;
+}
+@media (min-height: 640px) {
+  .sheet-card { border-radius: var(--rounded-xl); padding-bottom: var(--spacing-lg); animation: pop-in 400ms var(--ease); }
+}
+@keyframes sheet-up { from { transform: translateY(30px); opacity: 0; } }
+.sheet-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 36px; height: 36px; border-radius: var(--rounded-full);
+  background: var(--color-surface-alt); border: none;
+  font-size: 22px; line-height: 1; color: var(--color-on-surface-muted);
+}
+.sheet-eyebrow { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-on-surface-muted); margin: 0 0 var(--spacing-xs); }
+.sheet-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 var(--spacing-lg); }
+.sheet-title::first-letter { text-transform: uppercase; }
+.day-partners { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.day-partner { display: flex; gap: var(--spacing-md); align-items: flex-start; }
+.day-partner-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.day-partner-name { font-size: 15px; font-weight: 800; }
+.day-partner-state { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-on-surface-muted); }
+.day-partner-state.in { color: var(--color-success-strong); }
+.day-partner-note { font-size: 15px; font-style: italic; color: var(--color-on-surface); word-break: break-word; }
 
 /* ===== Marco ===== */
 .milestone { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: var(--spacing-lg); background: rgba(42, 36, 49, 0.55); backdrop-filter: blur(4px); }

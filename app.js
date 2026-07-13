@@ -159,10 +159,13 @@ function renderCalendar(hist, today) {
     const state = cellState(hist, k, today);
     const li = document.createElement("li");
     li.className = `cal-cell cell-${state}`;
-    li.textContent = d;
-    const c = (data.checkins || {})[k] || {};
-    const note = [c.p1_note, c.p2_note].filter(Boolean).join(" · ");
-    li.title = `${d}/${m}: ${{both:"os dois treinaram",frozen:"protegido 🧊",partial:"só um treinou","partial-today":"só um treinou",today:"hoje",missed:"sem treino",future:"",empty:""}[state]}${note ? " · " + note : ""}`;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "cal-day";
+    btn.textContent = d;
+    btn.dataset.day = k;
+    if (state === "future" || state === "empty") btn.disabled = true;
+    li.appendChild(btn);
     grid.appendChild(li);
   }
 
@@ -198,7 +201,43 @@ function showMilestone(msg) {
 function hideMilestone() { $("#milestone").hidden = true; }
 $("#milestone-close").addEventListener("click", hideMilestone);
 $("#milestone").addEventListener("click", (e) => { if (e.target.id === "milestone") hideMilestone(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideMilestone(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { hideMilestone(); hideDay(); } });
+
+// ===== Detalhe do dia =====
+const WEEKDAYS = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
+const STATE_LABELS = {
+  both: "Os dois treinaram 🎉",
+  frozen: "Dia protegido 🧊",
+  partial: "Só um treinou",
+  "partial-today": "Só um treinou — hoje ainda",
+  today: "Hoje — ninguém ainda",
+  missed: "Sem treino",
+};
+function openDay(k) {
+  const c = (data.checkins || {})[k] || {};
+  const hist = computeHistory(data.checkins || {}, dayKey());
+  const state = cellState(hist, k, dayKey());
+  if (state === "future" || state === "empty") return;
+  const [y, m, d] = k.split("-").map(Number);
+  const dt = parseKey(k);
+  $("#day-title").textContent = `${d} de ${MONTHS[m - 1]}`;
+  $("#day-state").textContent = `${WEEKDAYS[dt.getUTCDay()]} · ${STATE_LABELS[state] || ""}`;
+  for (const slot of ["p1", "p2"]) {
+    $(`[data-day-state-slot="${slot}"]`).textContent = c[slot] ? "Treinou" : "Não treinou";
+    $(`[data-day-state-slot="${slot}"]`).classList.toggle("in", !!c[slot]);
+    const note = c[slot + "_note"];
+    $(`[data-day-note-slot="${slot}"]`).textContent = note ? `“${note}”` : (c[slot] ? "(sem nota)" : "");
+  }
+  $("#day-sheet").hidden = false;
+  $("#day-close").focus();
+}
+function hideDay() { $("#day-sheet").hidden = true; }
+$("#day-close").addEventListener("click", hideDay);
+$("#day-sheet").addEventListener("click", (e) => { if (e.target.id === "day-sheet") hideDay(); });
+$("#cal-grid").addEventListener("click", (e) => {
+  const btn = e.target.closest(".cal-day");
+  if (btn && !btn.disabled) openDay(btn.dataset.day);
+});
 
 // ===== Escolher / trocar de sapinho =====
 $("#screen-picker").addEventListener("click", (e) => {
