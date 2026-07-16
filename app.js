@@ -1,5 +1,5 @@
 // Sapinho Streak — o streak de exercício do Hygor e da Aybala. 🐸
-import { dayKey, addDays, parseKey, computeHistory, cellState } from "./streak.js";
+import { dayKey, hourOf, addDays, parseKey, computeHistory, cellState } from "./streak.js";
 
 // Só duas pessoas, fixas. Sem contas, sem PINs.
 const PEOPLE = {
@@ -69,9 +69,12 @@ function render() {
   $("#topbar-me-name").textContent = PEOPLE[me].name;
 
   const c = checkins[today] || {};
-  const both = !!(c.p1 && c.p2);
+  const both = !!(c.p1 && c.p2);           // ambos TREINARAM de verdade (confete, celebração)
   const iAmIn = !!c[me];
   const partnerIn = !!c[other(me)];
+  const frozeToday = !!c[me + "_freeze"];
+  const partnerFroze = !!c[other(me) + "_freeze"];
+  const dayDone = !!((c[me] || frozeToday) && (c[other(me)] || partnerFroze)); // dia garantido, mesmo com freeze
 
   // Herói + mascote
   const num = $("#streak-num");
@@ -84,12 +87,17 @@ function render() {
   }
   prevStreak = hist.streak;
   $("#streak-label").textContent = hist.streak === 1 ? "dia seguido" : "dias seguidos";
-  $("#freeze-line").hidden = hist.freezes < 1;
+  const myFreezes = hist.freezes[me];
+  $("#freeze-line").hidden = myFreezes < 1;
+  $("#freeze-line").textContent = `${myFreezes} proteç${myFreezes > 1 ? "ões" : "ão"} disponíve${myFreezes > 1 ? "is" : "l"} 🧊`;
   const goal = Object.keys(MILESTONES).map(Number).find((n) => n > hist.streak);
   $("#goal-line").hidden = !(hist.streak > 0 && goal);
   if (goal) $("#goal-line").textContent = `Próximo marco: ${goal} dias 🏁`;
+  const hour = hourOf();
   const mascot = $("#mascot");
-  if (both) mascot.dataset.mood = "party";
+  if (dayDone) mascot.dataset.mood = "party";              // garantido, relaxa
+  else if (hour >= 23 && !iAmIn) mascot.dataset.mood = "panic";   // perdendo a cabeça 😱
+  else if (hour >= 21 && !iAmIn) mascot.dataset.mood = "worried"; // reta final 😟
   else if (iAmIn || partnerIn) mascot.dataset.mood = "wait";
   else if (hist.streak === 0 && hist.completed > 0) mascot.dataset.mood = "sad";
   else mascot.dataset.mood = "happy";
@@ -107,11 +115,12 @@ function render() {
 
   // Par
   for (const slot of ["p1", "p2"]) {
+    const froze = !!c[slot + "_freeze"];
     $(`[data-name-slot="${slot}"]`).textContent = PEOPLE[slot].name + (slot === me ? " (você)" : "");
-    $(`[data-avatar="${slot}"]`).classList.toggle("checked", !!c[slot]);
+    $(`[data-avatar="${slot}"]`).classList.toggle("checked", !!(c[slot] || froze));
     const st = $(`[data-state-slot="${slot}"]`);
-    st.textContent = c[slot] ? "Treinou!" : "Ainda não";
-    st.classList.toggle("in", !!c[slot]);
+    st.textContent = c[slot] ? "Treinou!" : froze ? "Protegido 🧊" : "Ainda não";
+    st.classList.toggle("in", !!(c[slot] || froze));
     $(`[data-note-slot="${slot}"]`).textContent = c[slot] && c[slot + "_note"] ? "“" + c[slot + "_note"] + "”" : "";
   }
   $(".pair-heart").classList.toggle("full", both);
@@ -119,18 +128,26 @@ function render() {
   // Linha de estado
   const them = PEOPLE[other(me)];
   const status = $("#status");
-  if (both) status.textContent = "Os dois treinaram, dia garantido! 🎉";
-  else if (iAmIn) status.textContent = `Falta ${them.art} ${them.name} 🐸`;
-  else if (partnerIn) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já treinou, agora só falta você! 💪`;
+  const iAmDone = iAmIn || frozeToday;
+  const partnerDone = partnerIn || partnerFroze;
+  if (dayDone) status.textContent = both ? "Os dois treinaram, dia garantido! 🎉" : "Dia garantido pela proteção! 🧊";
+  else if (iAmDone) status.textContent = `Falta ${them.art} ${them.name} 🐸`;
+  else if (partnerDone) status.textContent = `${them.art === "o" ? "O" : "A"} ${them.name} já está, agora só falta você! 💪`;
   else status.textContent = "Ainda ninguém treinou hoje.";
 
   // Botão + nota
   const btn = $("#checkin-btn");
   const noteField = $("#note-field");
-  if (both) { btn.className = "btn btn-checkin done"; btn.textContent = "Os dois! 🎉"; btn.disabled = true; }
-  else if (iAmIn) { btn.className = "btn btn-checkin done"; btn.textContent = "Feito ✓"; btn.disabled = true; }
+  if (dayDone) { btn.className = "btn btn-checkin done"; btn.textContent = both ? "Os dois! 🎉" : "Dia protegido 🧊"; btn.disabled = true; }
+  else if (iAmDone) { btn.className = "btn btn-checkin done"; btn.textContent = frozeToday ? "Protegido 🧊" : "Feito ✓"; btn.disabled = true; }
   else { btn.className = "btn btn-checkin"; btn.innerHTML = "Já treinei 🐸"; btn.disabled = false; }
-  $("#undo-btn").hidden = !iAmIn;
+
+  // Botão de proteção — alternativa a treinar, só enquanto ainda não agi e tenho proteção.
+  // Depois de ativar, o botão principal mostra "Protegido 🧊" e o desfazer reverte.
+  const freezeBtn = $("#freeze-btn");
+  freezeBtn.hidden = !(!iAmDone && myFreezes > 0);
+
+  $("#undo-btn").hidden = !iAmDone;
   noteField.hidden = !iAmIn;
   if (iAmIn) {
     const input = $("#note-input");
@@ -223,10 +240,12 @@ function openDay(k) {
   $("#day-title").textContent = `${d} de ${MONTHS[m - 1]}`;
   $("#day-state").textContent = `${WEEKDAYS[dt.getUTCDay()]} · ${STATE_LABELS[state] || ""}`;
   for (const slot of ["p1", "p2"]) {
-    $(`[data-day-state-slot="${slot}"]`).textContent = c[slot] ? "Treinou" : "Não treinou";
-    $(`[data-day-state-slot="${slot}"]`).classList.toggle("in", !!c[slot]);
+    const froze = !!c[slot + "_freeze"];
+    const trained = !!c[slot];
+    $(`[data-day-state-slot="${slot}"]`).textContent = trained ? "Treinou" : froze ? "Protegido 🧊" : "Não treinou";
+    $(`[data-day-state-slot="${slot}"]`).classList.toggle("in", trained || froze);
     const note = c[slot + "_note"];
-    $(`[data-day-note-slot="${slot}"]`).textContent = note ? `“${note}”` : (c[slot] ? "(sem nota)" : "");
+    $(`[data-day-note-slot="${slot}"]`).textContent = note ? `“${note}”` : (trained ? "(sem nota)" : "");
   }
   $("#day-sheet").hidden = false;
   $("#day-close").focus();
@@ -255,10 +274,12 @@ $("#switch-me").addEventListener("click", () => {
 
 // ===== Ações =====
 $("#checkin-btn").addEventListener("click", () => store.patch(["checkins", dayKey(), me], true));
+$("#freeze-btn").addEventListener("click", () => store.patch(["checkins", dayKey(), me + "_freeze"], true));
 $("#undo-btn").addEventListener("click", () => {
   const k = dayKey();
   store.patch(["checkins", k, me], null);
   store.patch(["checkins", k, me + "_note"], null);
+  store.patch(["checkins", k, me + "_freeze"], null);
 });
 let noteTimer;
 $("#note-input").addEventListener("input", (e) => {
@@ -277,6 +298,8 @@ function shiftMonth(k, n) {
 
 // Novo dia enquanto a app está aberta
 document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+// Tique de minuto: o mascote acompanha o relógio (fica preocupado/pânico ao fim do dia)
+setInterval(() => { if (!document.hidden) render(); }, 60_000);
 
 // ===== Arranque =====
 (async () => {
@@ -296,23 +319,42 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 // ===== Auto-teste: abrir index.html?test e ver a consola =====
 if (location.search.includes("test")) {
   const t = "2026-07-12";
-  const k = (n) => addDays(t, -n);
+  const k = (n) => addDays(t, -n); // k(0) = hoje
   const H = computeHistory;
-  console.assert(H({ [k(0)]: { p1: 1, p2: 1 }, [k(1)]: { p1: 1, p2: 1 } }, t).streak === 2, "dois dias completos = streak 2");
-  console.assert(H({ [k(1)]: { p1: 1, p2: 1 } }, t).streak === 1, "hoje aberto não parte o streak");
-  console.assert(H({}, t).streak === 0, "sem histórico = 0");
-  // freeze automático protege 1 falha, depois parte
-  const miss = { [k(3)]: { p1: 1, p2: 1 }, [k(2)]: {}, [k(1)]: { p1: 1, p2: 1 } };
-  const r1 = H(miss, t);
-  console.assert(r1.streak === 2 && r1.states[k(2)] === "frozen" && r1.freezes === 0, "1ª falha é protegida");
-  const miss2 = { [k(4)]: { p1: 1, p2: 1 }, [k(3)]: {}, [k(2)]: {}, [k(1)]: { p1: 1, p2: 1 } };
-  console.assert(H(miss2, t).streak === 1, "2ª falha sem proteção parte o streak");
-  // regenera após 7 completos
-  const week = {};
-  for (let i = 8; i >= 2; i--) week[k(i)] = { p1: 1, p2: 1 };
-  week[k(1)] = {}; // falha protegida pela proteção regenerada
-  const rw = H(week, t);
-  console.assert(rw.states[k(1)] === "frozen", "proteção regenera após 7 dias");
-  console.assert(H({ [k(2)]: { p1: 1 } }, t).states[k(2)] === "partial" || H({ [k(2)]: { p1: 1 } }, t).states[k(2)] === "frozen", "dia parcial");
+  const both = { p1: 1, p2: 1 };
+
+  // Básico
+  console.assert(H({ [k(1)]: both, [k(0)]: both }, t).streak === 2, "dois dias completos = streak 2");
+  console.assert(H({ [k(1)]: both }, t).streak === 1, "hoje aberto não parte o streak");
+  const empty = H({}, t);
+  console.assert(empty.streak === 0 && empty.freezes.p1 === 0 && empty.freezes.p2 === 0, "sem histórico = 0 e sem proteções");
+  console.assert(H({ [k(2)]: { p1: 1 } }, t).states[k(2)] === "partial", "dia com só um = parcial");
+
+  // Ganha 1 proteção cada após 3 dias reais seguidos
+  const earn = H({ [k(2)]: both, [k(1)]: both, [k(0)]: both }, t);
+  console.assert(earn.streak === 3 && earn.freezes.p1 === 1 && earn.freezes.p2 === 1, "3 dias reais = +1 proteção cada");
+
+  // Sem proteção, um dia perdido parte o streak
+  console.assert(H({ [k(2)]: both, [k(1)]: {} }, t).streak === 0, "sem proteção, falha parte o streak");
+
+  // Auto-freeze: com saldo, dia perdido é protegido e consome saldo
+  const auto = H({ [k(4)]: both, [k(3)]: both, [k(2)]: both, [k(1)]: {} }, t);
+  console.assert(auto.streak === 4 && auto.states[k(1)] === "frozen", "dia perdido é auto-protegido");
+  console.assert(auto.freezes.p1 === 0 && auto.freezes.p2 === 0, "auto-freeze consome saldo dos dois");
+
+  // Freeze manual: p1 usa proteção, p2 treina = dia completo; consome só o saldo do p1
+  const manual = H({ [k(4)]: both, [k(3)]: both, [k(2)]: both, [k(1)]: { p2: 1, p1_freeze: true } }, t);
+  console.assert(manual.streak === 4 && manual.states[k(1)] === "frozen", "freeze manual + parceiro treina = dia completo");
+  console.assert(manual.freezes.p1 === 0 && manual.freezes.p2 === 1, "freeze manual consome só o saldo de quem usou");
+
+  // Freeze manual sem saldo é inerte (não fecha o dia)
+  console.assert(H({ [k(1)]: { p2: 1, p1_freeze: true } }, t).streak === 0, "freeze sem saldo não protege");
+
+  // Cap de 2 por pessoa mesmo ganhando 3 vezes (9 dias reais)
+  const many = {};
+  for (let i = 8; i >= 0; i--) many[k(i)] = both;
+  const cap = H(many, t);
+  console.assert(cap.streak === 9 && cap.freezes.p1 === 2 && cap.freezes.p2 === 2, "proteção não passa de 2 por pessoa");
+
   console.log("✅ Auto-teste do Sapinho passou");
 }
